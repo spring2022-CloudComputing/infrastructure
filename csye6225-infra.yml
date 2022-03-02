@@ -93,7 +93,7 @@ Resources:
     Properties:
       VpcId: !Ref VPC
       CidrBlock: !Ref VocCIDRSubnetC
-      AvailabilityZone: !Select [ 0, !GetAZs ]    # Get the first AZ in the list 
+      AvailabilityZone: !Select [ 2, !GetAZs ]    # Get the first AZ in the list 
       Tags:
       - Key: Name
         Value: !Sub ${AWS::StackName}-Public-C
