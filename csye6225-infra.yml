@@ -19,6 +19,26 @@ Parameters:
     Default: 3
     Description:  How many Availability Zones do you wish to utilize?
 
+  VocCIDR:
+    Description: IP Range (CIDR Notation) for VPC
+    Type: String
+    Default:  10.1.0.0/16
+
+  VocCIDRSubnetA:
+    Description: Enter the IP Range (CIDR Notation) for the subnet in AZ 1
+    Type: String
+    Default:  10.1.10.0/24
+
+  VocCIDRSubnetB:
+    Description: Enter the IP Range (CIDR Notation) for the subnet in AZ 2
+    Type: String
+    Default:  10.1.20.0/24
+
+  VocCIDRSubnetC:
+    Description: Enter the IP Range (CIDR Notation) for the subnet in AZ 3
+    Type: String
+    Default:  10.1.30.0/24
+
 Conditions:
   BuildPublicB:         !Not [ !Equals [ !Ref NumberOfAZs, 1 ]] 
   BuildPublicC:         !Equals [ !Ref NumberOfAZs, 3 ] 
@@ -29,7 +49,7 @@ Resources:
   VPC:
     Type: AWS::EC2::VPC
     Properties:
-      CidrBlock: 10.1.0.0/16
+      CidrBlock: !Ref VocCIDR
       EnableDnsSupport: false
       EnableDnsHostnames: false
       Tags:
@@ -50,7 +70,7 @@ Resources:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref VPC
-      CidrBlock: 10.1.10.0/24
+      CidrBlock: !Ref VocCIDRSubnetA
       AvailabilityZone: !Select [ 0, !GetAZs ]    # Get the first AZ in the list       
       Tags:
       - Key: Name
@@ -61,7 +81,7 @@ Resources:
     Condition: BuildPublicB
     Properties:
       VpcId: !Ref VPC
-      CidrBlock: 10.1.20.0/24
+      CidrBlock: !Ref VocCIDRSubnetB
       AvailabilityZone: !Select [ 1, !GetAZs ]    # Get the second AZ in the list 
       Tags:
       - Key: Name
@@ -72,8 +92,8 @@ Resources:
     Condition: BuildPublicC
     Properties:
       VpcId: !Ref VPC
-      CidrBlock: 10.1.30.0/24
-      AvailabilityZone: !Select [ 0, !GetAZs ]    # Get the first AZ in the list 
+      CidrBlock: !Ref VocCIDRSubnetC
+      AvailabilityZone: !Select [ 2, !GetAZs ]    # Get the first AZ in the list 
       Tags:
       - Key: Name
         Value: !Sub ${AWS::StackName}-Public-C
