@@ -1,10 +1,18 @@
-Description: "This template shows how to create a VPC, Internet Gateway, to attach the Internet Gateway to VPC, to create subnets, to create a public Route Table and create a route in route table."
+Description: "This template shows how to create a VPC, Internet Gateway, to attach the Internet Gateway to VPC, to create subnets, to create a public Route Table, to create security group, to create ec2 instance and create a route in route table."
 
 Parameters:
   VpcName:
     Description: VPC Name
     Type: String
     Default: myVPC1
+
+  AMI:
+    Description: "AMI for Instance"
+    Type: String
+
+  KeyName:
+    Description: "Key Name for Instance"
+    Type: String
 
   VpcCIDR:
     Description: IP Range (CIDR Notation) for VPC
@@ -152,8 +160,8 @@ Resources:
           ToPort: 3306
           CidrIp: 0.0.0.0/0
         - IpProtocol: tcp
-          FromPort: 8081
-          ToPort: 8081
+          FromPort: 3000
+          ToPort: 3000
           CidrIp: 0.0.0.0/0
       SecurityGroupEgress:
         - IpProtocol: tcp
@@ -173,29 +181,28 @@ Resources:
           ToPort: 3306
           CidrIp: 0.0.0.0/0
         - IpProtocol: tcp
-          FromPort: 8081
-          ToPort: 8081
+          FromPort: 3000
+          ToPort: 3000
           CidrIp: 0.0.0.0/0
 
-  # Creating AMI EC2 Instance
-  MyEC2Instance:
-    Type: 'AWS::EC2::Instance'
+# Creating AMI EC2 Instance
+  EC2Instance:
+    Type: AWS::EC2::Instance
     Properties:
-      ImageId: ami-0e198ef84c68e3623
-      KeyName: testkey
-      InstanceType: t2.micro
-      DisableApiTermination: 'false'
-      SubnetId: !Ref Subnet1
-      SecurityGroupIds:
-        - Fn::GetAtt:
-          - ApplicationSecurityGroup
-          - GroupId
+      ImageId: !Ref AMI
+      KeyName: !Ref KeyName
+      InstanceType: "t2.micro"
       BlockDeviceMappings:
-        - DeviceName: /dev/xvda
+        - DeviceName: "/dev/xvda"
           Ebs:
-            VolumeType: gp2
-            DeleteOnTermination: 'true'
-            VolumeSize: '20'
-
-
-    
+            VolumeType: "gp2"
+            DeleteOnTermination: "false"
+            VolumeSize: "60"
+      NetworkInterfaces:
+        - AssociatePublicIpAddress: "true"
+          DeleteOnTermination: "true"
+          SubnetId: !Ref Subnet1
+          DeviceIndex: "0"
+          GroupSet: 
+            - !Ref ApplicationSecurityGroup
+            
