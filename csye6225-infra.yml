@@ -371,8 +371,12 @@ Resources:
         Fn::Base64: !Sub |
           #!/bin/bash
           echo export RDS="${MySqlDbInstance.Endpoint.Address}" >> /etc/profile
+          echo export DB_HOST="${MySqlDbInstance.Endpoint.Address}" >> /etc/profile
+          echo export DB_USER="root" >> /etc/profile
           echo export SQL_ROOT="root" >> /etc/profile
           echo export SQL_PASS="Qwerty12345" >> /etc/profile
+          echo export DB_PASSWORD="Qwerty12345" >> /etc/profile
+          echo export DB_NAME="csye6225" >> /etc/profile
           echo export bucket="${S3bucket}" >> /etc/profile 
           echo export AWS_BUCKET_NAME="${S3bucket}" >> /etc/profile
           echo export AWS_BUCKET_REGION="us-east-1" >> /etc/profile
@@ -381,3 +385,5 @@ Resources:
           echo export AWS_SECRET_ACCESS_KEY="SVT1L8eaC4IrZu+uq8NREsAIOooo0KZRTvkWSnpk" >> /etc/profile
           echo export DB="csye6225" >> /etc/profile
           echo export region="us-east-1" >> /etc/profile
+          sleep 20
+          sudo pm2 restart all --update-env
