@@ -50,6 +50,26 @@ Parameters:
     Type: String
     Description: Enter the profile that you want this to run on either dev or demo
 
+  DBPassword:
+    Default: Qwerty12345
+    Type: String
+    Description: Db password
+  
+  DBName:
+    Default: csye6225
+    Type: String
+    Description: Db name
+  
+  AWSAccesskeyid:
+    Default: AKIASIKYVMASQMMLCI46 
+    Type: String
+    Description: access key id
+
+  AWSSECRETACCESSKEY:
+    Default: SVT1L8eaC4IrZu+uq8NREsAIOooo0KZRTvkWSnpk
+    Type: String
+    Description: access key secret
+
 Resources:
   VPC:
     Type: AWS::EC2::VPC
@@ -374,15 +394,15 @@ Resources:
           echo export DB_HOST="${MySqlDbInstance.Endpoint.Address}" >> /etc/profile
           echo export DB_USER="root" >> /etc/profile
           echo export SQL_ROOT="root" >> /etc/profile
-          echo export SQL_PASS="Qwerty12345" >> /etc/profile
-          echo export DB_PASSWORD="Qwerty12345" >> /etc/profile
-          echo export DB_NAME="csye6225" >> /etc/profile
+          echo export SQL_PASS="${DBPassword}" >> /etc/profile
+          echo export DB_PASSWORD="${DBPassword}" >> /etc/profile
+          echo export DB_NAME="${DBName}" >> /etc/profile
           echo export bucket="${S3bucket}" >> /etc/profile 
           echo export AWS_BUCKET_NAME="${S3bucket}" >> /etc/profile
           echo export AWS_BUCKET_REGION="us-east-1" >> /etc/profile
           echo export AWS_REGION="us-east-1" >> /etc/profile
-          echo export AWS_ACCESS_KEY_ID="AKIASIKYVMASQMMLCI46"  >> /etc/profile
-          echo export AWS_SECRET_ACCESS_KEY="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" >> /etc/profile
+          echo export AWS_ACCESS_KEY_ID="${AWSAccesskeyid}"  >> /etc/profile
+          echo export AWS_SECRET_ACCESS_KEY="${AWSSECRETACCESSKEY}" >> /etc/profile
           echo export DB="csye6225" >> /etc/profile
           echo export region="us-east-1" >> /etc/profile
           sleep 20
