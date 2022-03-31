@@ -503,9 +503,9 @@ Resources:
   AutoscalingGroup:
     Type: AWS::AutoScaling::AutoScalingGroup
     Properties:
-      MinSize: '3'
-      MaxSize: '5'
-      DesiredCapacity: '3'
+      MinSize: '1'
+      MaxSize: '3'
+      DesiredCapacity: '1'
       LaunchConfigurationName: !Ref LaunchConfig
       VPCZoneIdentifier:
       - !Ref PublicSubnet1
