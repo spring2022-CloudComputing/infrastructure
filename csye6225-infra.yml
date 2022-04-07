@@ -71,7 +71,7 @@ Parameters:
   ProfileName:
     Default: demo
     Type: String
-    Description: Dev/Demo(Prod)
+    Description: Dev/Demo
   myLaunchTemplateVersionNumber:
     Type: String
     Default: "1.0"
@@ -467,7 +467,7 @@ Resources:
       - DeviceName: "/dev/sdm"
         Ebs: 
           VolumeType: "gp2"
-          DeleteOnTermination: "false"
+          DeleteOnTermination: "true"
           VolumeSize: "20"
       AssociatePublicIpAddress: "true"
       SecurityGroups:
@@ -504,7 +504,7 @@ Resources:
     Type: AWS::AutoScaling::AutoScalingGroup
     Properties:
       MinSize: '1'
-      MaxSize: '3'
+      MaxSize: '5'
       DesiredCapacity: '1'
       LaunchConfigurationName: !Ref LaunchConfig
       VPCZoneIdentifier:
@@ -537,8 +537,8 @@ Resources:
     Properties:
       EvaluationPeriods: '1'
       Statistic: Average
-      Threshold: '4'
-      AlarmDescription: Alarm if CPU utilization more than 4%
+      Threshold: '11'
+      AlarmDescription: Alarm if CPU utilization more than 11%
       Period: '300'
       AlarmActions:
       - !Ref ScaleOutPolicy
@@ -553,8 +553,8 @@ Resources:
     Properties:
       EvaluationPeriods: '1'
       Statistic: Average
-      Threshold: '2'
-      AlarmDescription: Alarm if CPU utilization is less than 2%
+      Threshold: '9'
+      AlarmDescription: Alarm if CPU utilization is less than 9%
       Period: '300'
       AlarmActions:
       - !Ref ScaleInPolicy
@@ -760,3 +760,27 @@ Resources:
         - Key: Name
           Value: NodeAppASG
           Type: KEY_AND_VALUE
+  CloudWatchAgentPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: "EC2CloudWatchPolicy"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - 'cloudwatch:PutMetricData'
+              - 'ec2:DescribeTags'
+              - 'logs:PutLogEvents'
+              - 'logs:DescribeLogStreams'
+              - 'logs:DescribeLogGroups'
+              - 'logs:CreateLogStream'
+              - 'logs:CreateLogGroup'
+            Resource: "*"
+          - Effect: Allow
+            Action:
+              - 'ssm:GetParameter'
+              - 'ssm:PutParameter'
+            Resource: "arn:aws:ssm:*:*:parameter/AmazonCloudWatch-*"
+      Roles:
+        - Ref: IAMRole
